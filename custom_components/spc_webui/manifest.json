@@ -1,0 +1,10 @@
+{
+  "domain": "spc_webui",
+  "name": "Vanderbilt SPC (Web UI)",
+  "version": "0.1.0",
+  "documentation": "https://example.invalid/README.md",
+  "requirements": ["httpx"],
+  "codeowners": [],
+  "iot_class": "local_polling",
+  "config_flow": true
+}
