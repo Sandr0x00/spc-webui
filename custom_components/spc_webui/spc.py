@@ -86,7 +86,7 @@ def parse_alarm_state(html):
     """Pull out the All Areas alarm state text from the system summary table."""
     re_match = RE_STATE.search(html)
     if re_match:
-        return re_match.group(1).strip()
+        return re_match.group(1).strip().lower()
     raise ValueError("Alarm state not found in HTML")
 
 
@@ -169,10 +169,9 @@ class SPCSession:
 
     async def set_state(self, state):
         """Send an arm/disarm command and return the resulting state."""
-        key = state.strip().lower()
-        if key == "unset":
+        if state == "unset":
             data = {"unset_all_areas": "Unset"}
-        elif key == "fullset":
+        elif state == "fullset":
             data = {"fullset_area1": "Fullset"}
         else:
             raise ValueError(f"{state}: unknown state")

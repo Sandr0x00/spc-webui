@@ -30,9 +30,9 @@ async def async_setup_entry(hass, entry, async_add_entities):
 def spc_to_ha_state(spc_state):
     """Map SPC alarm state strings to Home Assistant alarm states."""
     return {
-        "Unset": "disarmed",
-        "Fullset": "armed_away",
-    }.get(spc_state.strip().title())
+        "unset": "disarmed",
+        "fullset": "armed_away",
+    }.get(spc_state)
 
 
 class SPCAllAreasAlarm(CoordinatorEntity, AlarmControlPanelEntity):
@@ -65,9 +65,9 @@ class SPCAllAreasAlarm(CoordinatorEntity, AlarmControlPanelEntity):
         return spc_to_ha_state(self.coordinator.data)
 
     async def async_alarm_disarm(self, code=None):
-        await self.spc.set_state("Unset")
+        await self.spc.set_state("unset")
         await self.coordinator.async_request_refresh()
 
     async def async_alarm_arm_away(self, code=None):
-        await self.spc.set_state("Fullset")
+        await self.spc.set_state("fullset")
         await self.coordinator.async_request_refresh()
