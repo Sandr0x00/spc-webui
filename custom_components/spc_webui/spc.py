@@ -191,6 +191,10 @@ class SPCSession:
             base_url=normalize_url(url),
             verify=get_ssl_context(),
             timeout=httpx.Timeout(10.0),
+            limits=httpx.Limits(
+                max_connections=1,
+                max_keepalive_connections=0,
+            ),
         )
 
         self.creds = {
