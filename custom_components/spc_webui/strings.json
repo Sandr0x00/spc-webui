@@ -8,7 +8,9 @@
           "url": "URL of the SPC panel",
           "userid": "User ID",
           "password": "Password",
-          "poll_interval": "Poll interval (seconds)"
+          "poll_interval": "Poll interval (seconds)",
+          "edp_port": "EDP port (0 = disabled)",
+          "edp_system_id": "EDP system ID (0 = any)"
         }
       }
     },
@@ -21,7 +23,9 @@
     "step": {
       "init": {
         "data": {
-          "poll_interval": "Poll interval (seconds)"
+          "poll_interval": "Poll interval (seconds)",
+          "edp_port": "EDP port (0 = disabled)",
+          "edp_system_id": "EDP system ID (0 = any)"
         }
       }
     }

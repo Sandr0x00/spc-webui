@@ -1,10 +1,10 @@
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
-from homeassistant.exceptions import HomeAssistantError
 from homeassistant.components.alarm_control_panel import (
     AlarmControlPanelEntity,
     AlarmControlPanelEntityFeature,
     AlarmControlPanelState,
 )
+from homeassistant.exceptions import HomeAssistantError
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN
 from .spc import SPCError
@@ -35,7 +35,10 @@ class SPCAlarm(CoordinatorEntity, AlarmControlPanelEntity):
     """Alarm entity representing all SPC areas."""
 
     _attr_code_arm_required = False
-    _attr_supported_features = AlarmControlPanelEntityFeature.ARM_AWAY
+    _attr_supported_features = (
+        AlarmControlPanelEntityFeature.ARM_AWAY
+        | AlarmControlPanelEntityFeature.ARM_NIGHT
+    )
     _attr_has_entity_name = True
 
     def __init__(self, coordinator, spc, device_info, unique_prefix):
@@ -52,6 +55,7 @@ class SPCAlarm(CoordinatorEntity, AlarmControlPanelEntity):
         return {
             "unset": AlarmControlPanelState.DISARMED,
             "fullset": AlarmControlPanelState.ARMED_AWAY,
+            "partset": AlarmControlPanelState.ARMED_NIGHT,
         }.get(arm_state)
 
     async def _async_set_arm_state(self, arm_state):
@@ -67,3 +71,6 @@ class SPCAlarm(CoordinatorEntity, AlarmControlPanelEntity):
 
     async def async_alarm_arm_away(self, code=None):
         await self._async_set_arm_state("fullset")
+
+    async def async_alarm_arm_night(self, code=None):
+        await self._async_set_arm_state("partset")

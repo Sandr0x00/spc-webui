@@ -1,12 +1,11 @@
 import logging
 import re
 import ssl
-from pathlib import Path
 from datetime import datetime, timezone
+from pathlib import Path
 from urllib.parse import urlparse
 
 import httpx
-
 
 # Page: any
 RE_TITLE = re.compile(
@@ -263,6 +262,8 @@ class SPCSession:
             data = {"unset_all_areas": "Unset"}
         elif arm_state == "fullset":
             data = {"fullset_area1": "Fullset"}
+        elif arm_state == "partset":
+            data = {"partset_area1": "Partset"}
         elif arm_state == "forceset":
             data = {"fullset_force1": "Force set"}
         else:

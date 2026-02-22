@@ -1,18 +1,20 @@
 import voluptuous as vol
-
 from homeassistant import config_entries
 from homeassistant.core import callback
 
 from .const import (
-    DOMAIN,
-    CONF_URL,
-    CONF_USERID,
+    CONF_EDP_PORT,
+    CONF_EDP_SYSTEM_ID,
     CONF_PASSWORD,
     CONF_POLL_INTERVAL,
+    CONF_URL,
+    CONF_USERID,
+    DEFAULT_EDP_PORT,
+    DEFAULT_EDP_SYSTEM_ID,
     DEFAULT_POLL_INTERVAL,
+    DOMAIN,
 )
-from .spc import SPCSession, SPCLoginError
-
+from .spc import SPCLoginError, SPCSession
 
 STEP_USER_DATA_SCHEMA = vol.Schema(
     {
@@ -20,6 +22,8 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
         vol.Required(CONF_USERID): str,
         vol.Required(CONF_PASSWORD): str,
         vol.Optional(CONF_POLL_INTERVAL, default=DEFAULT_POLL_INTERVAL): vol.Coerce(int),
+        vol.Optional(CONF_EDP_PORT, default=DEFAULT_EDP_PORT): vol.Coerce(int),
+        vol.Optional(CONF_EDP_SYSTEM_ID, default=DEFAULT_EDP_SYSTEM_ID): vol.Coerce(int),
     }
 )
 
@@ -36,6 +40,8 @@ class SPCWebUIConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             userid = user_input[CONF_USERID]
             password = user_input[CONF_PASSWORD]
             poll_interval = user_input.get(CONF_POLL_INTERVAL, DEFAULT_POLL_INTERVAL)
+            edp_port = user_input.get(CONF_EDP_PORT, DEFAULT_EDP_PORT)
+            edp_system_id = user_input.get(CONF_EDP_SYSTEM_ID, DEFAULT_EDP_SYSTEM_ID)
 
             spc = SPCSession(url=url, userid=userid, password=password)
             try:
@@ -57,6 +63,8 @@ class SPCWebUIConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         CONF_USERID: userid,
                         CONF_PASSWORD: password,
                         CONF_POLL_INTERVAL: poll_interval,
+                        CONF_EDP_PORT: edp_port,
+                        CONF_EDP_SYSTEM_ID: edp_system_id,
                     },
                 )
 
@@ -79,10 +87,15 @@ class SPCWebUIOptionsFlow(config_entries.OptionsFlow):
         if user_input is not None:
             return self.async_create_entry(title="", data=user_input)
 
-        current = self.config_entry.data.get(CONF_POLL_INTERVAL, DEFAULT_POLL_INTERVAL)
+        current_poll = self.config_entry.data.get(CONF_POLL_INTERVAL, DEFAULT_POLL_INTERVAL)
+        current_edp_port = self.config_entry.data.get(CONF_EDP_PORT, DEFAULT_EDP_PORT)
+        current_edp_system_id = self.config_entry.data.get(CONF_EDP_SYSTEM_ID, DEFAULT_EDP_SYSTEM_ID)
+
         schema = vol.Schema(
             {
-                vol.Optional(CONF_POLL_INTERVAL, default=current): vol.Coerce(int),
+                vol.Optional(CONF_POLL_INTERVAL, default=current_poll): vol.Coerce(int),
+                vol.Optional(CONF_EDP_PORT, default=current_edp_port): vol.Coerce(int),
+                vol.Optional(CONF_EDP_SYSTEM_ID, default=current_edp_system_id): vol.Coerce(int),
             }
         )
         return self.async_show_form(step_id="init", data_schema=schema)
